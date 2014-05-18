@@ -1,0 +1,9 @@
+{
+  "name": "Skeleton",
+  "dependencies": {
+    "font-awesome": "~4.1.0",
+    "moment": "~2.6.0",
+    "mailcheck": "~1.0.3",
+    "jquery.complexify.js": "*"
+  }
+}
