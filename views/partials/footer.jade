@@ -1,0 +1,16 @@
+footer.footer.bg-black
+  .container
+    p
+      | Copyright © &nbsp;
+      img.hidden-xs(src='/favicon.png', width='50px')
+      | &nbsp;all rights reserved.&nbsp;
+
+//- Javascript
+//- ! Place scripts in footer for faster page rendering !
+script(src='/lib/jquery/dist/jquery.min.js')
+//- Then we use jQuery to async load everything else!
+script.
+  $(document).ready(function() {
+    // Load main project js
+    $.getScript('/js/factor.min.js');
+  });

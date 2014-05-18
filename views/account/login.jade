@@ -1,0 +1,41 @@
+extends ../layouts/layout
+
+block head
+  title Sign In
+
+block content
+  .container
+    .row
+      .col-sm-6.col-sm-offset-3
+        br
+        br
+        form(action="/login", method='POST')
+          legend Log In!
+          .form-group
+            label.sr-only(for='username') Name:
+            input.form-control(type='text', name='username', placeholder='Your Name', autofocus=true, required)
+          .form-group
+            label.sr-only(for='password') Password:
+            input.form-control(type='password', name='password', placeholder='Password', required)
+          .form-group
+            button.btn.btn-primary(type='submit')
+              i.fa.fa-unlock-alt
+              | &nbsp;Login
+
+        p <small>Hint: bob, secret</small>
+
+//- <h1>Log in!</h1>
+//- <form action="/login" method="post">
+//-   <div>
+//-   <label>Username:</label>
+//-   <input type="text" name="username"/><br/>
+//-   </div>
+//-   <div>
+//-   <label>Password:</label>
+//-   <input type="password" name="password"/>
+//-   </div>
+//-   <div>
+//-   <input type="submit" value="Submit"/>
+//-   </div>
+//- </form>
+//- <p><small>Hint - bob:secret</small></p>

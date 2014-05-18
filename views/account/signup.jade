@@ -1,0 +1,146 @@
+extends ../layouts/layout
+
+block head
+  title Sign Up
+
+block content
+  .container
+    .row
+      .col-sm-6.col-sm-offset-3
+        br
+        br
+        form(action='/signup', method='POST')
+          legend Sign Up!
+          .form-group
+            label.sr-only(for='name') Name:
+            input.form-control(type='text', name='username', placeholder='Your Name', autofocus=true, required)
+          .form-group
+            label.sr-only(for='email') Email:
+            input.form-control(type='email', name='email', id='email', placeholder='Your Email', required)
+            #hint
+          .form-group
+            label.sr-only(for='password') Password:
+            input.form-control(type='password', name='password', id='password', placeholder='Password', required, pattern='^[^\S]{4,}', title='At least 4 characters!')
+            .progress
+              .progress-bar(role='progressbar')
+          .form-group
+            label.sr-only(for='confirmPassword') Confirm Password:
+            input.form-control(type='password', name='confirmPassword', placeholder='Confirm Password', required, pattern='^[^\S]{4,}', title='At least 4 characters!')
+          .form-group
+            button.btn.btn-success(type='submit')
+              i.fa.fa-check
+              | &nbsp;Sign Up
+
+block scripts
+  script.
+    $(document).ready(function() {
+
+      //- Get Mailcheck Script
+      $.getScript('/lib/mailcheck/src/mailcheck.min.js')
+      .done(function(script, textStatus) {
+        // initiate mailcheck
+        $('#email').on('blur', function() {
+          $(this).mailcheck({
+            //- domains: domains,                       // optional
+            //- topLevelDomains: topLevelDomains,       // optional
+            //- distanceFunction: superStringDistance,  // optional
+            suggested: function(element, suggestion) {
+              if (!$('#hint').html()) {
+                  // First error - fill in/show entire hint element
+                  suggestion = '<em>Did you mean <span class="suggestion">' +
+                      '<span class="address">' + suggestion.address + '</span>' +
+                      '@<a href="#" id="suggestion"><strong>' + suggestion.domain +
+                      '</strong></a></span>?</em>';
+                  $('#hint').html(suggestion).fadeIn(200);
+                  // Use suggestion
+                  $( '#suggestion' ).click(function () {
+                    // On click, fill in the field with the suggestion and remove the hint
+                    $('#email').val($('.suggestion').text());
+                    $('#hint').fadeOut(150, function() {
+                      $(this).empty();
+                    });
+                    //go to next field
+                    $('input[name=password]').focus().keyup();
+                    //- return false;
+                  });
+              } else {
+                  // Subsequent errors
+                  $('.address').html(suggestion.address);
+                  $('.domain').html(suggestion.domain);
+              }
+            },
+            empty: function(element) {
+              // callback code
+            }
+          });
+        });
+      })
+      .fail(function(jqxhr, settings, exception) {
+          console.log('Mailcheck load failed.');
+      });
+
+      // Hide progress bar until we need it
+      $('.progress').hide();
+
+      $.getScript( '/lib/jquery.complexify.js/jquery.complexify.banlist.js' )
+        .done(function( script, textStatus ) {
+
+          //- Get complexity Script
+          $.getScript('/lib/jquery.complexify.js/jquery.complexify.js')
+            .done(function(script, textStatus) {
+
+              $('#password').complexify({
+                minimumChars        : 6,
+                strengthScaleFactor : 0.5,
+                banmode             : 'loose',
+                evaluateOnInit      : false
+                }, function (valid, complexity) {
+
+                  // Show the bar
+                  $('.progress').fadeIn(200);
+
+                  // Change colors
+                  if (!valid) {
+                    $('.progress-bar').css({'width': complexity + '%'}).removeClass('progress-bar-success').addClass('progress-bar-danger');
+                  } else {
+                    $('.progress-bar').css({'width': complexity + '%'}).removeClass('progress-bar-danger').addClass('progress-bar-success');
+                  }
+
+                  // Label progress bar
+                  switch (true)
+                  {
+                    case (complexity > 81):
+                      $('.progress-bar').html('Excellent Complexity!');
+                      break;
+                    case (complexity > 61):
+                      $('.progress-bar').html('Strong Complexity!');
+                      break;
+                    case (complexity > 41):
+                      $('.progress-bar').html('Good Complexity');
+                      break;
+                    case (complexity > 31):
+                      $('.progress-bar').html('Average Complexity');
+                      break;
+                    case (complexity > 21):
+                      $('.progress-bar').html('Weak');
+                      break;
+                    default:
+                      $('.progress-bar').html(':(');
+                      break;
+                  }
+                }
+              );
+            // Hide, our work is done ;)
+            $('#password').on('blur', function() {
+              $('.progress').fadeOut(150);
+            });
+          })
+          .fail(function(jqxhr, settings, exception) {
+            console.log('Complexify load failed.');
+          });
+        })
+        .fail(function( jqxhr, settings, exception ) {
+          console.log('Complexify banlist load failed.');
+      });
+
+    });
